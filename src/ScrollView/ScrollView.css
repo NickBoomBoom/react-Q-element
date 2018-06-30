@@ -1,0 +1,114 @@
+.load-more-root {
+  -webkit-overflow-scrolling: touch;
+  overflow: auto;
+  position: relative;
+}
+
+.load-more-root::-webkit-scrollbar {
+  display: none;
+}
+
+.load-more-root .pull-down-bar {
+  text-align: center;
+  height: 50px;
+  margin-top: -50px;
+  line-height: 50px;
+}
+
+.load-more-root .pull-up-bar {
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: -50px;
+}
+
+.load-more-root .is-rotate {
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+}
+
+.load-more-root .is-transition {
+  display: inline-block;
+  transition: all .2s linear;
+  -webkit-transition: all .2s linear;
+  -moz-transition: all .2s linear;
+  -ms-transition: all .2s linear;
+  -o-transition: all .2s linear;
+}
+
+/* .load-more-root .scroll-view-root {
+  position: relative;
+} */
+
+.load-more-root .scroll-view-root .scroll-view-x {
+  overflow-x:scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+.load-more-root .scroll-view-root .scroll-view-y {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.load-more-root  .scroll-view-x::-webkit-scrollbar,.scroll-view-y::-webkit-scrollbar{
+  display: none;
+}
+.load-more-root .scroll-view-x::-webkit-scrollbar{
+  display: none;
+}
+.load-more-root .scroll-view-root .scroll-x-item {
+  display: inline-block;
+  vertical-align: top;
+}
+.load-more-root .pull-up-tip {
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  text-align: center
+}
+
+/* spinner */
+
+.load-more-root  .spinner {
+  display: inline-block;
+}
+ 
+.load-more-root  .spinner > div {
+  width: 10px;
+  height: 10px;
+  background-color: #000;
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+  animation: bouncedelay 1.4s infinite ease-in-out;
+  /* Prevent first frame from flickering when animation starts */
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+ 
+.load-more-root  .spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+ 
+.load-more-root  .spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+ 
+@-webkit-keyframes bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0.0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+ 
+@keyframes bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 40% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
