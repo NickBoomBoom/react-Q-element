@@ -2,7 +2,9 @@
 
 # React  私有组件库的搭建  推荐使用 nwb
 
-链接: *https://github.com/insin/nwb/blob/master/docs/guides/ReactComponents.md#developing-react-components-and-libraries-with-nwb*
+[nwb git地址](https://github.com/insin/nwb/blob/master/docs/guides/ReactComponents.md#developing-react-components-and-libraries-with-nwb)
+
+## npm start  运行 demo
 
 ## 注意点: 
 
