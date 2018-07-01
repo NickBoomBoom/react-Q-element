@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Screen from "../../utils/Screen";
-import './LazyLoadImg.css'
+import Screen from "../utils/Screen";
+import './LazyLoad.css'
 
-class LazyLoadImg extends Component {
+class LazyLoad extends Component {
   constructor(props) {
     super(props);
     this.lazyLoad = this.lazyLoad.bind(this, props.src);
@@ -55,4 +55,4 @@ class LazyLoadImg extends Component {
   }
 }
 
-export default LazyLoadImg; 
+export default LazyLoad
