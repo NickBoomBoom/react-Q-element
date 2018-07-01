@@ -46,10 +46,11 @@ class TabContainer extends Component {
   componentWillReceiveProps(nextProps) {
     console.log('tabcontainer nextProps', nextProps)
     let { index } = nextProps
+    let {onTranslate} = this.props
     if (this.index !== index) {
       this.index = index
-      this.container.style.transform=`translateX(${-index*this.itemWidth}px)`
-      // this.translate(-index * this.itemWidth, true)
+      onTranslate && onTranslate({distance: -this.index*this.itemWidth})
+      this.container.style.transform = `translateX(${-index * this.itemWidth}px)`
     }
   }
   componentDidMount() {
@@ -79,7 +80,7 @@ class TabContainer extends Component {
         // right
         event.preventDefault();
         // event.stopPropagation();
-        console.log('右移')
+        // console.log('右移')
         if (this.index !== 0) {
           this.translate(distance)
         }
@@ -89,7 +90,7 @@ class TabContainer extends Component {
         // left
         event.preventDefault();
         // event.stopPropagation();
-        console.log('左移')
+        // console.log('左移')
         if (this.index !== this.props.children.length - 1) {
           this.translate(distance)
         }
@@ -99,13 +100,13 @@ class TabContainer extends Component {
         // down
         if (this.slideDirection) return
         this.slideDirection = DOWN
-        console.log('向下')
+        // console.log('向下')
       }
       else if (Math.abs(Y) > Math.abs(X) && Y < 0) {
         // up 
         if (this.slideDirection) return
         this.slideDirection = TOP
-        console.log('向上')
+        // console.log('向上')
       }
     }
   }
@@ -132,6 +133,7 @@ class TabContainer extends Component {
   }
   // 判断用户是查看上一页还是下一页, 并设置回弹效果
   isTranslate = () => {
+
     if (this.slideDirection === RIGHT || this.slideDirection === LEFT) {
       let { onSel } = this.props
       let distance = this.endX - this.startX

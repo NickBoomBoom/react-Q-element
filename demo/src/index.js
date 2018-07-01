@@ -23,7 +23,7 @@ class Demo extends Component {
     let data = [{ name: '标题1', type: 1 }, { name: '标题2', type: 2 }, { name: '标题3', type: 3 }]
     // console.log(list)
     return <div>
-      <NavBar
+      {/* <NavBar
        translate={NavBarTranslate}
         onSel={(item, index) => {
           console.log('navitem', index)
@@ -32,7 +32,7 @@ class Demo extends Component {
         index={TabContainerIndex}
       >
        
-      </NavBar>
+      </NavBar> */}
       <NavBar
         translate={NavBarTranslate}
         onSel={(item, index) => {
@@ -55,6 +55,7 @@ class Demo extends Component {
           })
         }}
         onTranslate={obj => {
+          console.log("触发滚动")
           this.setState({
             NavBarTranslate: obj
           })
@@ -64,13 +65,12 @@ class Demo extends Component {
         <TabContainerItem style={{ fontSize: '20px', backgroundColor: 'red', lineHeight: '100px', height: '500px' }}>
           <ScrollView
             isFetch={true}
-            // scrollX={true}
+            scrollY={true}
             isPullDown={true}
             isPullUp={true}
             topMethod={() => {
               return new Promise((resolve, reject) => {
                 setTimeout(() => {
-
                   this.setState({ list: list.reverse(), requestState: true }, () => {
                     resolve()
                   })

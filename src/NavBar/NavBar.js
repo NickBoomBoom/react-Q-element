@@ -14,7 +14,7 @@ import './NavBar.css'
     onSel: 回调函数
       (item,index) => {console.log(item,index)} 
 
-    ind: 展示第几个 navbar, 默认第一个, 从零开始
+    index: 展示第几个 navbar, 默认第一个, 从零开始
 
     TODO: 完成!!!!!
        功能点==> 当 NavBar 与 TabContainer 搭配使用时, TabContainer 滑动, Nav的 Bar 也随着同步移动
@@ -30,37 +30,33 @@ class NavBar extends Component {
     }
   }
 
+
   componentWillReceiveProps(nextProps) {
-    // console.log('Nav_nextProps', nextProps)
     let { index, translate } = nextProps
     let { ind } = this.state
-    if (index >= 0 && index !== ind) {
-      this.setState({ ind: index })
-    } else {
-      translate && this.translateBar(translate)
-    }
+    console.log('Nav_nextProps', nextProps, this.props)
+    translate && this.translateBar(translate)
+    if (ind !== index) this.setState({ ind: index })
   }
 
   translateBar = s => {
     let { navData, children } = this.props
     let length = navData ? navData.length : children.length
     let { distance, transition } = s
-    if (this.bar) {
-      // 不连写的原因是 防止以后添加其他属性 会覆盖
-      transition ? this.bar.style.transition = 'all 200ms' : this.bar.style.transition = 'none'
-      this.bar.style.transform = `translateX(${-distance / length}px)`
-    }
+    // 不连写的原因是 防止以后添加其他属性 会覆盖
+    transition ? this.bar.style.transition = 'all 200ms' : this.bar.style.transition = 'none'
+    this.bar.style.transform = `translateX(${-distance / length}px)`
+
   }
 
   sel = (item, index) => {
-    // 防止出现不需要 bar 的情况
-    this.bar && (this.bar.style.transition = 'all 200ms')
-    let { ind } = this.state
-    // 函数节流
-    if (ind === index) return console.warn('函数节流,不可重复点击')
     let { onSel } = this.props
-    onSel && onSel(item, index)
-    this.setState({ ind: index })
+    console.log(this.bar)
+    if (this.bar) {
+      this.bar.style.transition = 'all 200ms'
+      console.log(this.bar)
+    }
+    this.setState({ ind: index }, () => { onSel && onSel(item, index) })
   }
 
   render() {

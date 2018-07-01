@@ -16,13 +16,13 @@ class ScrollView extends Component {
       isLoadOver: props.isLoadOver,                          // 请求是否完成,可传字符串 || Boolean, Boolean 为 true 时默认展示字段'全部加载完毕', 传字符串就展示字符串
       requestState: props.requestState,                      // 请求是否完成
       isPullDown: props.isPullDown || false,                 // 是否开启下拉刷新, 默认为 false Boolean
-      isPullUp: props.isPullUp || true,                      // 是否开启上拉加载, 默认为 true Boolean
+      isPullUp: props.isPullUp || false,                      // 是否开启上拉加载, 默认为 false Boolean
       topDistance: props.topDistance || 50,                  // 下拉刷新 触发 阀值, 默认为 50px Number
       bottomDistance: props.bottomDistance || 50,            // 上拉加载 触发 阀值, 默认为 50px Number
       isPullDownStatus: null,                                // 下拉刷新状态, 默认为 null String
       isPullUpStatus: null,                                  // 上拉加载状态, 默认为 null String
-      topMethod: props.topMethod,                            // 下拉刷新执行方法 必须为 promise
-      bottomMethod: props.bottomMethod,                      // 上拉加载执行方法 必须为 promise
+      topMethod: props.topMethod,                            // 下拉刷新执行方法 
+      bottomMethod: props.bottomMethod,                      // 上拉加载执行方法 
       wrapHeight: props.wrapHeight,                          // 用户传进来的高度, 如果没有则自动获取 scorllview 父级的高度
       pullThreshold: props.pullThreshold || 200,             // 上拉和下拉 最高可拉的阀值, 默认200  
       scrollX: props.scrollX || false,                       // 允许横向滚动, 默认为 false Boolean
@@ -58,7 +58,7 @@ class ScrollView extends Component {
   componentWillReceiveProps(nextProps) {
     let { requestState, isLoadOver } = nextProps
     let { isPullUpStatus, isPullDownStatus, animateTime } = this.state
-    console.log('scrollveiw nextProps', nextProps, requestState)
+    // console.log('scrollveiw nextProps', nextProps, requestState)
     const OO = {
       // 上拉加载
       pullUp: () => {
@@ -185,7 +185,7 @@ class ScrollView extends Component {
 
   // 无数据直接触发顶部 loading, 并执行 topMethod函数
   fetchData = () => {
-    let {isFetch, topMethod} = this.state
+    let {isFetch, topMethod,animateTime} = this.state
     if(isFetch) {
       this.setState({
         isPullDownStatus: LOADING,
@@ -218,7 +218,6 @@ class ScrollView extends Component {
   // 在scrollY 打开的情况下, 如果实际的子元素的总高度 小于 使用者定义的高度, 所以这时候我们就需要填充下盒子
   fill = once => {
     let { wrapHeight } = this.state
-    console.log('fill', wrapHeight)
     let itemHeight = parseFloat(window.getComputedStyle(this.children).height)
     this.wrap.style.height = `${wrapHeight}px`
     this.setState({
@@ -271,7 +270,7 @@ class ScrollView extends Component {
    */
   translate = (distance = 0, transition = true) => {
     let { pullThreshold, animateTime } = this.state
-    console.log('移动距离', distance, transition, this.content.style.transform)
+    // console.log('移动距离', distance, transition, this.content.style.transform)
     if (Math.abs(distance) > pullThreshold) return
     transition ? this.content.style.transition = `all ${animateTime}ms ease` : this.content.style.transition = 'none'
     this.content.style.transform = `translate3d(0, ${distance}px,0)`
