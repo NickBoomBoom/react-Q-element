@@ -4,6 +4,8 @@
 
 [nwb git地址](https://github.com/insin/nwb/blob/master/docs/guides/ReactComponents.md#developing-react-components-and-libraries-with-nwb)
 
+[npm 地址](https://www.npmjs.com/package/react-q-element)
+
 ## npm start  运行 demo
 
 ## 注意点: 
