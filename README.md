@@ -1,10 +1,10 @@
-#react-Q-element
+# react-Q-element
 
-#React  私有组件库的搭建  推荐使用 nwb
+# React  私有组件库的搭建  推荐使用 nwb
 
 链接: *https://github.com/insin/nwb/blob/master/docs/guides/ReactComponents.md#developing-react-components-and-libraries-with-nwb*
 
-##注意点: 
+## 注意点: 
 	
   1.在打包过程中 css 样式文件没有打包的情况下, 请添加  npm build ——copu-files
 

@@ -11,7 +11,7 @@ const DOWN = 'down'
       onSel: 回调函数  返回index  Function
       onTranslate: 回调函数 配合 Navbar 做 bar 联动, 返回一个对象 {
         distance:  Number // 移动距离
-        transition: Boolean // 是否开始 transition 动画
+        transition: Boolean // 是否开启 transition 动画
       }
 */
 /* 

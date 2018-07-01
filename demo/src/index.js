@@ -59,9 +59,11 @@ class Demo extends Component {
             NavBarTranslate: obj
           })
         }}
+
       >
         <TabContainerItem style={{ fontSize: '20px', backgroundColor: 'red', lineHeight: '100px', height: '500px' }}>
           <ScrollView
+            isFetch={true}
             // scrollX={true}
             isPullDown={true}
             isPullUp={true}

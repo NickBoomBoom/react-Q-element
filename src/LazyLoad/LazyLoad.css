@@ -1,7 +1,2 @@
-.LazyLoadImg {
-  animation: show 1000ms;
-  }
-  @keyframes show {
-      from {opacity: 0;}
-      to {opacity: 1;}
-  }
+.LazyLoadImg { transition: opacity 1s ease; -webkit-transition: opacity 1s ease; -moz-transition: opacity 1s ease; -ms-transition: opacity 1s ease; -o-transition: opacity 1s ease;
+}

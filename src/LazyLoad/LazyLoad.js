@@ -1,12 +1,14 @@
-import React, { Component } from 'react'
-import Screen from '../utils/Screen'
-import './LazyLoad.css'
-import DefaultImg from './whitebg.png'
+import React, { Component } from 'react';
+import Screen from "../../utils/Screen";
+import './LazyLoadImg.css'
 
-class LazyLoad extends Component {
+class LazyLoadImg extends Component {
   constructor(props) {
     super(props);
     this.lazyLoad = this.lazyLoad.bind(this, props.src);
+    this.state = {
+      isAnimate: false
+    }
   }
 
   componentDidMount() {
@@ -27,20 +29,30 @@ class LazyLoad extends Component {
 
   lazyLoad(src) {
     if (Screen.availHeight() + Screen.scrollTop() > this.img.offsetTop - 100) {
-      this.img.src = src;
+      !this.img.src && (this.img.src = src);
     }
   }
 
   render() {
+    let { isAnimate } = this.state
     let props = Object.assign({}, this.props);
-    props.src = DefaultImg
     return (
-      <div className='LazyLoadImg'>
-        <img {...props} alt="" ref={input => {
-          this.img = input
-        }} />
+      <div className={`${isAnimate ? 'LazyLoadImg' : ''}`} style={{ opacity: isAnimate ? 1 : 0 }} >
+        <img
+          {...props}
+          alt=""
+          ref={node => {
+            this.img = node
+          }}
+          onLoad={() => {
+            this.setState({
+              isAnimate: true
+            })
+          }}
+        />
       </div>
     );
   }
 }
-export default LazyLoad
+
+export default LazyLoadImg; 

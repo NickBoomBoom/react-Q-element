@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import './ScrollView.css'
-import { SSL_OP_PKCS1_CHECK_1 } from 'constants';
 const TOP = 'top'
 const BOTTOM = 'bottom'
 const LOADING = 'loading'
@@ -11,8 +10,9 @@ const TOUCH_BOTTOM = 'touch_bottom'
 class ScrollView extends Component {
   constructor(props) {
     super(props)
-    this.limit = props.limit || 3                            // touch移动的距离限制 每次移动 1 / limit
+    this.limit = props.limit || 4                            // touch移动的距离限制 每次移动 1 / limit
     this.state = {
+      isFetch: props.isFetch || false,                       // 当页面没有数据的时候,开启 loading 效果,直接触发 topMethod 函数, 默认为 false 
       isLoadOver: props.isLoadOver,                          // 请求是否完成,可传字符串 || Boolean, Boolean 为 true 时默认展示字段'全部加载完毕', 传字符串就展示字符串
       requestState: props.requestState,                      // 请求是否完成
       isPullDown: props.isPullDown || false,                 // 是否开启下拉刷新, 默认为 false Boolean
@@ -49,6 +49,7 @@ class ScrollView extends Component {
         this.wrap.addEventListener('touchstart', this.handleTouchStart)
         this.wrap.addEventListener('touchmove', this.handleTouchMove)
         this.wrap.addEventListener('touchend', this.handleTouchEnd)
+        this.fetchData()
         this.fill(true)
       }
     })
@@ -182,6 +183,20 @@ class ScrollView extends Component {
     isPullUpStatus && pullUpFn[isPullUpStatus]()
   }
 
+  // 无数据直接触发顶部 loading, 并执行 topMethod函数
+  fetchData = () => {
+    let {isFetch, topMethod} = this.state
+    if(isFetch) {
+      this.setState({
+        isPullDownStatus: LOADING,
+        isPullUpStatus: null
+      },()=>{
+        this.translate(this.pullDownBarHeight, true)
+        topMethod && topMethod()
+      })
+    }
+  }
+
   // 滚动触发函数
   scroll = () => {
     let { onLower, onUpper, onScroll, scrollX, upperThreshold, lowerThreshold } = this.state
@@ -270,19 +285,19 @@ class ScrollView extends Component {
    * @param {*} dom dom, 需要滚动的目标 
    * @param {*} direction  scrollTop || scrollLeft, 默认 scollTop
    */
-  animate = (target, dom, direction = scrollTop) => {
-    clearInterval(this.timer)
-    console.log('执行 animate')
-    this.timer = setInterval(() => {
-      let step = (target - dom[direction]) / 5
-      step = step > 0 ? Math.ceil(step) : Math.floor(step)
-      dom[direction] += step
-      if (Math.abs(target - dom[direction]) <= Math.abs(step)) {
-        clearInterval(this.timer)
-        dom[direction] = target
-      }
-    }, 20)
-  }
+  // animate = (target, dom, direction = scrollTop) => {
+  //   clearInterval(this.timer)
+  //   console.log('执行 animate')
+  //   this.timer = setInterval(() => {
+  //     let step = (target - dom[direction]) / 5
+  //     step = step > 0 ? Math.ceil(step) : Math.floor(step)
+  //     dom[direction] += step
+  //     if (Math.abs(target - dom[direction]) <= Math.abs(step)) {
+  //       clearInterval(this.timer)
+  //       dom[direction] = target
+  //     }
+  //   }, 20)
+  // }
 
   //  滚动到底部什么位置触发下拉加载
   scrollBottom = () => {
@@ -303,8 +318,6 @@ class ScrollView extends Component {
         <div className="bounce3"></div>
       </div>
     }
-
-    console.log('isLoadOver', isLoadOver)
 
     return <div className="load-more-root" style={style} ref={node => this.wrap = node}>
       <div className="load-more-content" ref={node => this.content = node}>
