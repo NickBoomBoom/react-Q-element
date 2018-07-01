@@ -1,6 +1,6 @@
 {
   "name": "react-q-element",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "react-Q-element React component",
   "main": "lib/index.js",
   "module": "es/index.js",
