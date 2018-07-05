@@ -1,7 +1,7 @@
 {
   "name": "react-q-element",
-  "version": "1.0.3",
-  "description": "react-Q-element React component",
+  "version": "1.1.0",
+  "description": "react-q-element React component",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -32,6 +32,6 @@
   "license": "MIT",
   "repository": "",
   "keywords": [
-    "react-component"
+    "react-component", "pull-down", "pull-up", "NavBar","Scroll-View", "TabContainer"
   ]
 }

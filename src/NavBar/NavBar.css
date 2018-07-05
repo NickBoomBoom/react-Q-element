@@ -1,20 +1,33 @@
 .NavBar-root {
-  /* height: .88rem; */
   width: 100%;
   font-size: 0;
   white-space: nowrap;
   position: relative;
 }
+
 .NavBar-root .Nav-item {
-  display:inline-block;
-  font-size: 20px;
-  /* line-height: .88rem; */
-  line-height: 50px;
-  height: 50px;
+  display: inline-block;
+  font-size: .32rem;
+  line-height: .8rem;
+  height: .8rem;
+  font-family: PingFangSC-Regular;
+  columns: #333333;
   text-align: center;
+  position: relative;
+  z-index: 9;
+ 
+}
+.NavBar-root  .Nav-active {
+  position: absolute;
+  bottom: .19rem
+}
+.NavBar-root .Nav-item.active {
+  font-family: PingFangSC-Semibold;
+  color: #000000;
 }
 
-.NavBar-root .Nav-active {
- background-color: black;
- height: 3px;
+.NavBar-root .Nav-active .Nav-active-bar {
+  margin: 0 auto;
+  height: .12rem;
+  background-image: linear-gradient(90deg, #ff4242 0%, #ff9e87 100%)
 }

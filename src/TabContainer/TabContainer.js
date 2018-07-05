@@ -44,12 +44,13 @@ class TabContainer extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('tabcontainer nextProps', nextProps)
+    // console.log('tabcontainer nextProps', nextProps)
     let { index } = nextProps
-    let {onTranslate} = this.props
+    let { onTranslate } = this.props
     if (this.index !== index) {
       this.index = index
-      onTranslate && onTranslate({distance: -this.index*this.itemWidth})
+      onTranslate && onTranslate({ distance: -this.index * this.itemWidth })
+      this.container.style.transition = null
       this.container.style.transform = `translateX(${-index * this.itemWidth}px)`
     }
   }
@@ -124,8 +125,8 @@ class TabContainer extends Component {
    */
   translate = (distance, transition) => {
     let cssText = `
-        ${transition ? 'transition: all 200ms;' : ''}
-        transform:translateX(${distance}px)
+    ${transition ?'transition: all 200ms;':''}
+    transform:translateX(${distance}px)
     `
     this.container.style = cssText
     let { onTranslate } = this.props
@@ -155,8 +156,8 @@ class TabContainer extends Component {
       // 滑动距离大于阀值  判断左右,跳转下一页 or 上一页
       if (Math.abs(distance) >= this.interval) {
         // 判断左右 跳转下一页
-        console.log('上下页切换', this.index)
         obj[this.slideDirection]()
+        console.log('上下页切换', this.index)
         onSel && onSel(this.index)
       }
       this.translate(-this.index * this.itemWidth, true)

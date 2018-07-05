@@ -34,7 +34,10 @@ class ScrollView extends Component {
       onScroll: props.onScroll,                              // 滚动实时触发  Function
       itemIndex: props.itemIndex || false,                   // 展示第几个内容, 默认 false, 即默认展示, Number, 与 itemKey 只能存在一个
       itemKey: props.itemKey || false,                       // 展示第几个内容, 默认 false, 即默认展示, String || Number, 与 itemIndex 只能存在一个
-      animateTime: props.animateTime || 300                  // 设置缓动动画完成时间, 默认300 Number
+      animateTime: props.animateTime || 300,                 // 设置缓动动画完成时间, 默认300 Number
+      // TODO: 功能点: 当出现类似于饿了么外卖界面的情况,左右各一个 ScrollView 左边点击某个标签, 右边自动滚动到对应位置
+      // scrollTop: props.scrollTop,                            // 设置竖向滚动条位置
+      // scrollLeft: props.scrollLeft,                          // 设置横向滚动条位置
     }
   }
 
@@ -100,7 +103,7 @@ class ScrollView extends Component {
   }
 
   handleTouchStart = (e) => {
-    console.log('触摸开始', this.wrap.scrollTop)
+    // console.log('触摸开始', this.wrap.scrollTop)
     this.startY = e.touches[0].clientY
   }
 
@@ -110,7 +113,7 @@ class ScrollView extends Component {
     let moveY = e.touches[0].clientY
     let distance
     this.direction = moveY - this.startY > 0 ? TOUCH_BOTTOM : TOUCH_TOP
-    console.log('滚动距离==>' + scrollTop, '上拉加载距离==>' + this.bottom)
+    // console.log('滚动距离==>' + scrollTop, '上拉加载距离==>' + this.bottom)
     if (isPullDown && this.direction === TOUCH_BOTTOM && scrollTop === 0 && isPullDownStatus !== LOADING && !isPullUpStatus) {
       event.preventDefault();
       // event.stopPropagation();
@@ -120,7 +123,7 @@ class ScrollView extends Component {
       this.setState({
         isPullDownStatus: distance >= topDistance ? TOP : BOTTOM
       })
-      console.log('开启下拉刷新')
+      // console.log('开启下拉刷新')
     } else if (isPullUp && !isLoadOver && this.direction === TOUCH_TOP && scrollTop >= this.bottom && isPullUpStatus !== LOADING && !isPullDownStatus) {
       event.preventDefault();
       // event.stopPropagation();
@@ -130,7 +133,7 @@ class ScrollView extends Component {
       this.setState({
         isPullUpStatus: Math.abs(distance) >= bottomDistance ? BOTTOM : TOP
       })
-      console.log('开启上拉加载')
+      // console.log('开启上拉加载')
     }
   }
 
@@ -139,7 +142,7 @@ class ScrollView extends Component {
     // 重置上拉, 下拉 开始的 Y 轴点
     this.pullDownBarStartY = null
     this.pullUpBarStartY = null
-    console.log('触摸结束', isPullDownStatus, isPullUpStatus)
+    // console.log('触摸结束', isPullDownStatus, isPullUpStatus)
     // OO 包裹,const 定义的常量  不可动, 如果动的话, 下面两个对象中 top, bottom 也需要改变
     // 上拉 下拉 还是尽量独立出来  方便以后维护和更改
     const pullDownFn = {
@@ -179,7 +182,7 @@ class ScrollView extends Component {
         })
       }
     }
-    isPullDownStatus && pullDownFn[isPullDownStatus]()
+    isPullDownStatus && isPullDownStatus !== LOADING && pullDownFn[isPullDownStatus]()
     isPullUpStatus && pullUpFn[isPullUpStatus]()
   }
 
@@ -240,7 +243,7 @@ class ScrollView extends Component {
       index = itemIndex
     } else if (itemKey) {
       for (let i = 0; i < this.children.length; i++) {
-        console.log('key 值', this.children[i].key)
+        // console.log('key 值', this.children[i].key)
         if (itemKey === this.children[i].key) {
           index = i
           break
