@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Common from '../utils/Common'
 import './NavBar.css'
 
 
@@ -31,13 +32,16 @@ class NavBar extends Component {
       isAnimate: props.isAnimate || false,        // 是否开启点击移动动画
       onSel: props.onSel,                         // 回调函数, 返回 item ,index
       data: props.data,                           // 接受数组形式 [{name: String, type: Number}]  也可接受 children
-      itemWidth: window.screen.width / length,    // 标签宽度
       length,                                     // 数组 || children 个数
     }
   }
 
+
   componentDidMount() {
-    this.setBarWidth()
+    let { length } = this.state
+    this.setState({
+      itemWidth: Common.attr(this.wrap, 'width') / length
+    }, () => this.setBarWidth())
   }
 
   componentWillReceiveProps(nextProps) {
@@ -77,12 +81,11 @@ class NavBar extends Component {
   }
 
   render() {
-    let { ind, translate, newInd, onSel, length, data, itemWidth } = this.state
+    let { ind, data, itemWidth } = this.state
     let { children, style } = this.props
-    return <div style={style} className='NavBar-root' >
-      <div className="container" ref={node => {
-        this.container = node
-      }}>
+
+    return <div style={style} className='NavBar-root' ref={node => this.wrap = node}>
+      <div className="container" ref={node => this.container = node}>
         {
           data ?
             data.map((item, index) => {

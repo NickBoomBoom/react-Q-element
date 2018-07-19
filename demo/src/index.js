@@ -4,6 +4,7 @@ import TabContainer from '../../src/TabContainer/TabContainer'
 import TabContainerItem from '../../src/TabContainerItem/TabContainerItem'
 import NavBar from '../../src/NavBar/NavBar'
 import ScrollView from '../../src/ScrollView/ScrollView'
+import AutoScrollTab from '../../src/AutoScrollTab/AutoScrollTab'
 import './base.css'
 
 
@@ -14,155 +15,149 @@ class Demo extends Component {
     this.state = {
       arr: [1, 2, 3, 4, 5, 6, 7, 8, 9],
       list: [1, 2, 3, 4, 5, 6, 7, 8, 88],
-      TabContainerIndex: 0
+      TabContainerIndex: 0,
+      navIndex: 0,
+      currentData: [
+        { list: [], pageNo: 1, pageTotal: null, requestState: false },  // allLiST
+        { list: [], pageNo: 1, pageTotal: null, requestState: false },  // payList
+        { list: [], pageNo: 1, pageTotal: null, requestState: false },  // sendList
+        { list: [], pageNo: 1, pageTotal: null, requestState: false }   // receiptList
+      ]
     }
   }
 
   render() {
-    let { arr, list, TabContainerIndex, NavBarTranslate, requestState, isLoadOver, isLoadOver3 } = this.state
+    let { arr, list, TabContainerIndex, NavBarTranslate, requestState, isLoadOver, isLoadOver3, navIndex, currentData } = this.state
     let data = [{ name: '标题1', type: 1 }, { name: '标题2', type: 2 }, { name: '标题3', type: 3 }]
+    const test = [
+      { name: '分类', type: 1 },
+      { name: '品牌馆', type: 2 }
+    ]
+
+
     // console.log(list)
     return <div>
-      {/* <NavBar
-       translate={NavBarTranslate}
-        onSel={(item, index) => {
-          console.log('navitem', index)
-        }}
-        navData={data}
-        index={TabContainerIndex}
-      >
-       
-      </NavBar> */}
-      <NavBar
-        translate={NavBarTranslate}
-        onSel={(item, index) => {
-          console.log('navitem', index)
-          this.setState({
-            TabContainerIndex: index
-          })
-        }}
-        index={TabContainerIndex}
-      >
-        <span>首页</span>
-        <span>购物车</span>
-        <span>我的</span>
-      </NavBar>
-      <TabContainer
-        index={TabContainerIndex}
-        onSel={index => {
-          this.setState({
-            TabContainerIndex: index
-          })
-        }}
-        onTranslate={obj => {
-          console.log("触发滚动")
-          this.setState({
-            NavBarTranslate: obj
-          })
-        }}
-
-      >
-        <TabContainerItem style={{ fontSize: '20px', backgroundColor: 'red', lineHeight: '100px', height: '500px' }}>
-          <ScrollView
-            isFetch={true}
-            scrollY={true}
-            isPullDown={true}
-            isPullUp={true}
-            topMethod={() => {
-              return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  this.setState({ list: list.reverse(), requestState: true }, () => {
-                    resolve()
-                  })
-                }, 2000);
+      {
+        true && <div>
+          <NavBar
+            translate={NavBarTranslate}
+            onSel={(item, index) => {
+              console.log('navitem', index)
+              this.setState({
+                TabContainerIndex: index
               })
             }}
-            requestState={requestState}
-            bottomMethod={() => {
-              return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  this.setState({
-                    list: [...list, '我是节点1', '我是节点2', ...list, '节点3', '节点4'],
-                    requestState: true,
-                    isLoadOver: '全部加载完毕'
-                  }, () => {
-                    resolve()
-                  })
-                }, 1000);
-              })
-            }}
-            onUpper={() => {
-              console.warn('到顶了')
-            }}
-            onLower={() => {
-              console.warn('到底了')
-            }}
-            onScroll={obj => {
-              console.warn('无时无刻不在触发', obj)
-            }}
-            isLoadOver={isLoadOver}
+            index={TabContainerIndex}
+            isAnimate={true}
           >
-            {list.map((item, index) => {
-              return <div style={{ height: '50px', lineHeight: '50px', backgroundColor: 'red', textAlign: 'center' }} key={'item' + index}>
-                {item}
-              </div>
-            })}
-          </ScrollView>
-        </TabContainerItem>
-        <TabContainerItem style={{ backgroundColor: 'yellow', lineHeight: '50px', height: '500px' }}>
-          {arr.map(i => {
-            return <div key={i}>{i}</div>
-          })}
-        </TabContainerItem>
-        <TabContainerItem style={{ backgroundColor: 'skyblue', lineHeight: '30px', height: '500px' }}>
+            <span>首页</span>
+            <span>购物车</span>
+            <span>我的</span>
+            <span>分类</span>
+          </NavBar>
           <ScrollView
-            // scrollX={true}
-            isPullDown={true}
-            isPullUp={true}
-            topMethod={() => {
-              return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  this.setState({ arr: arr.reverse(), requestState: true }, () => {
-                    resolve()
-                  })
-                }, 2000);
-              })
-            }}
-            requestState={requestState}
-            bottomMethod={() => {
-              return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  this.setState({
-                    arr: [...arr, '我是节点1', '我是节点2', ...arr, '节点3', '节点4'],
-                    requestState: true,
-                    isLoadOver3: '第三个加载完成'
-                  }, () => {
-                    resolve()
-                  })
-                }, 1000);
-              })
-            }}
-            onUpper={() => {
-              console.warn('到顶了')
-            }}
-            onLower={() => {
-              console.warn('到底了')
-            }}
-            onScroll={obj => {
-              console.warn('无时无刻不在触发', obj)
-            }}
-            isLoadOver={isLoadOver3}
+                
+                  style={{ backgroundColor: `blue`}}
+                  reLoad={currentData[0].list.length === 0}
+                  isPullDown={true}
+                  isPullUp={true}
+                  topMethod={() => {
+                    console.log('刷新操作')
+                    currentData[0].list = [1, 2, 4]
+                    currentData[0].requestState = true
+                    setTimeout(() => {
+                      this.setState({
+                        currentData
+                      })
+                    }, 2000);
+
+
+                  }}
+                  wrapHeight={500}
+                  requestState={currentData[0].requestState}
+                  bottomMethod={() => {
+                    console.log('上拉加载')
+                  }}
+                isLoadOver={true}
+                >
+                  {
+                    currentData[0].list.map((item, index) => {
+                      return <div key={index} style={{ width: '100%', height: '50px' }}>{item}</div>
+                    })
+                  }
+
+                </ScrollView>
+
+          {/* <ScrollView
+            scrollX={true}
+            itemIndex={TabContainerIndex}
           >
-            {arr.map((item, index) => {
-              return <div style={{ height: '50px', lineHeight: '50px', textAlign: 'center' }} key={'item' + index}>
-                {item}
-              </div>
-            })}
-          </ScrollView>
-        </TabContainerItem>
+            {
+              currentData.map((c, ci) => {
+                // let reLoad = TabContainerIndex === ci && c.list.length === 0
 
-      </TabContainer>
+                return <ScrollView
+                  key={ci}
+                  style={{ backgroundColor: `${ci % 2 === 0 ? 'red' : 'blue'}`}}
+                  reLoad={true}
+                  isPullDown={true}
+                  isPullUp={true}
+                  topMethod={() => {
+                    console.log('刷新操作')
+                    c.list = [1, 2, 4]
+                    c.requestState = true
+                    setTimeout(() => {
+                      this.setState({
+                        currentData
+                      })
+                    }, 2000);
 
+
+                  }}
+                  wrapHeight={500}
+                  requestState={c.requestState}
+                  bottomMethod={() => {
+                    console.log('上拉加载')
+                  }}
+                isLoadOver={true}
+                >
+                  {
+                    c.list.map((item, index) => {
+                      return <div key={index} style={{ width: '100%', height: '50px' }}>{item}</div>
+                    })
+                  }
+
+                </ScrollView>
+
+              })
+            }
+
+
+
+          </ScrollView> */}
+
+
+
+
+
+        </div>
+      }
+
+
+      {/* <ScrollView
+        scrollX={true}
+        itemIndex={navIndex}
+      >
+        <div style={{ width: '375px', height: '100px', backgroundColor: 'skyblue' }} key={'test1'}>
+          测试1
+        </div>
+        <div style={{ width: '375px', height: '100px', backgroundColor: 'green' }} key={'test2'}>
+          测试2
+        </div>
+        <div style={{ width: '375px', height: '100px', backgroundColor: 'yellow' }}>
+          测试3
+        </div>
+      </ScrollView> */}
 
 
 

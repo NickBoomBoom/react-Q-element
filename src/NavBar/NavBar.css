@@ -3,25 +3,26 @@
   font-size: 0;
   white-space: nowrap;
   position: relative;
+  height: .88rem;
 }
 
-.NavBar-root .Nav-item {
+.NavBar-root .Nav-item,.Nav-item>span {
   display: inline-block;
+  vertical-align: top;
   font-size: .32rem;
-  line-height: .8rem;
-  height: .8rem;
+  line-height: .88rem;
+  height: .88rem;
   font-family: PingFangSC-Regular;
-  columns: #333333;
+  color: #333333;
   text-align: center;
   position: relative;
-  z-index: 9;
- 
+  z-index: 1;
 }
 .NavBar-root  .Nav-active {
   position: absolute;
-  bottom: .19rem
+  bottom: .25rem
 }
-.NavBar-root .Nav-item.active {
+.NavBar-root .Nav-item.active,.Nav-item.active>span {
   font-family: PingFangSC-Semibold;
   color: #000000;
 }

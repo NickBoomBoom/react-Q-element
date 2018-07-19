@@ -1,0 +1,15 @@
+.AutoScrollTab-root {
+  width: 100%;
+  overflow: auto;
+  font-size: 0;
+  white-space: nowrap;
+}
+
+.AutoScrollTab-root>.item {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.AutoScrollTab-root::-webkit-scrollbar {
+  display: none;
+}

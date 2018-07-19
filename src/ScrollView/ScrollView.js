@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Common from '../utils/Common'
 import './ScrollView.css'
 const TOP = 'top'
 const BOTTOM = 'bottom'
@@ -6,13 +7,16 @@ const LOADING = 'loading'
 
 const TOUCH_TOP = 'touch_top'
 const TOUCH_BOTTOM = 'touch_bottom'
+const TOUCH_LEFT = 'touch_left'
+const TOUCH_RIGHT = 'touch_right'
 
 class ScrollView extends Component {
   constructor(props) {
     super(props)
     this.limit = props.limit || 4                            // touch移动的距离限制 每次移动 1 / limit
     this.state = {
-      isFetch: props.isFetch || false,                       // 当页面没有数据的时候,开启 loading 效果,直接触发 topMethod 函数, 默认为 false 
+      reLoad: props.reLoad || false,                       // 当页面没有数据的时候,开启 loading 效果,直接触发 topMethod 函数, 默认为 false 
+      loadOverText: props.loadOverText ||false,           // 当上拉加载所有后 是否展示加载完毕 提示 , 默认不展示
       isLoadOver: props.isLoadOver,                          // 请求是否完成,可传字符串 || Boolean, Boolean 为 true 时默认展示字段'全部加载完毕', 传字符串就展示字符串
       requestState: props.requestState,                      // 请求是否完成
       isPullDown: props.isPullDown || false,                 // 是否开启下拉刷新, 默认为 false Boolean
@@ -32,7 +36,7 @@ class ScrollView extends Component {
       onUpper: props.onUpper,                                // 滚动到顶部/左边, 会触发 onUpper 事件 Function
       onLower: props.onLower,                                // 滚动到底部/右边, 会触发 onLower 事件 Function
       onScroll: props.onScroll,                              // 滚动实时触发  Function
-      itemIndex: props.itemIndex || false,                   // 展示第几个内容, 默认 false, 即默认展示, Number, 与 itemKey 只能存在一个
+      itemIndex: props.itemIndex >= 0 ? props.itemIndex : false,// 展示第几个内容, 默认 false, 即默认展示, Number, 与 itemKey 只能存在一个
       itemKey: props.itemKey || false,                       // 展示第几个内容, 默认 false, 即默认展示, String || Number, 与 itemIndex 只能存在一个
       animateTime: props.animateTime || 300,                 // 设置缓动动画完成时间, 默认300 Number
       // TODO: 功能点: 当出现类似于饿了么外卖界面的情况,左右各一个 ScrollView 左边点击某个标签, 右边自动滚动到对应位置
@@ -42,26 +46,22 @@ class ScrollView extends Component {
   }
 
   componentDidMount() {
-    let { wrapHeight, scrollX } = this.state
-    this.setState({
-      wrapHeight: wrapHeight ? wrapHeight : parseFloat(window.getComputedStyle(this.wrap.parentNode).height)
-    }, () => {
-      if (scrollX) {
-        this.setTarget()
-      } else {
-        this.wrap.addEventListener('touchstart', this.handleTouchStart)
-        this.wrap.addEventListener('touchmove', this.handleTouchMove)
-        this.wrap.addEventListener('touchend', this.handleTouchEnd)
-        this.fetchData()
-        this.fill(true)
-      }
-    })
+    let { scrollX } = this.state
+    if (scrollX) {
+      this.setTarget()
+    } else {
+      this.wrap.addEventListener('touchstart', this.handleTouchStart)
+      this.wrap.addEventListener('touchmove', this.handleTouchMove)
+      this.wrap.addEventListener('touchend', this.handleTouchEnd)
+      this.fetchData()
+      this.fill(true)
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    let { requestState, isLoadOver } = nextProps
+
+    let { requestState, isLoadOver, itemIndex, itemKey, reLoad, wrapHeight } = nextProps
     let { isPullUpStatus, isPullDownStatus, animateTime } = this.state
-    // console.log('scrollveiw nextProps', nextProps, requestState)
     const OO = {
       // 上拉加载
       pullUp: () => {
@@ -90,7 +90,13 @@ class ScrollView extends Component {
       isPullUpStatus && OO.pullUp()
       isPullDownStatus && OO.pullDown()
     }
-    this.setState({ isLoadOver })
+    this.setState({ isLoadOver, reLoad }, () => this.fetchData())
+    if (itemIndex >= 0) {
+      this.state.itemIndex !== itemIndex && this.setState({ itemIndex }, () => this.setTarget())
+    } else if (itemKey) {
+      this.state.itemKey !== itemKey && this.setState({ itemKey }, () => this.setTarget())
+    }
+    this.setState({ wrapHeight }, () => this.wrap.style.height = `${wrapHeight}px`)
   }
 
   componentWillUnmount() {
@@ -103,16 +109,20 @@ class ScrollView extends Component {
   }
 
   handleTouchStart = (e) => {
-    // console.log('触摸开始', this.wrap.scrollTop)
     this.startY = e.touches[0].clientY
+    this.startX = e.touches[0].clientX
   }
 
   handleTouchMove = e => {
     let { isPullDown, isPullUp, topDistance, bottomDistance, isPullDownStatus, isPullUpStatus, isLoadOver } = this.state
     let scrollTop = this.wrap.scrollTop
     let moveY = e.touches[0].clientY
+    let moveX = e.touches[0].clientX
+    let x = moveX - this.startX
+    let y = moveY - this.startY
     let distance
-    this.direction = moveY - this.startY > 0 ? TOUCH_BOTTOM : TOUCH_TOP
+    this.direction = this.setDirection(x, y)
+    // if (this.direction === TOUCH_LEFT || this.direction === TOUCH_RIGHT) return
     // console.log('滚动距离==>' + scrollTop, '上拉加载距离==>' + this.bottom)
     if (isPullDown && this.direction === TOUCH_BOTTOM && scrollTop === 0 && isPullDownStatus !== LOADING && !isPullUpStatus) {
       event.preventDefault();
@@ -186,14 +196,34 @@ class ScrollView extends Component {
     isPullUpStatus && pullUpFn[isPullUpStatus]()
   }
 
+  // 方向判定
+
+  setDirection = (x, y) => {
+    if (Math.abs(x) > Math.abs(y) && x > 0) {
+      // right
+      return TOUCH_RIGHT
+    }
+    else if (Math.abs(x) > Math.abs(y) && x < 0) {
+      // left
+      return TOUCH_LEFT
+    }
+    else if (Math.abs(y) > Math.abs(x) && y > 0) {
+      return TOUCH_BOTTOM
+      // console.log('向下')
+    }
+    else if (Math.abs(y) > Math.abs(x) && y < 0) {
+      return TOUCH_TOP
+      // console.log('向上')
+    }
+  }
   // 无数据直接触发顶部 loading, 并执行 topMethod函数
   fetchData = () => {
-    let {isFetch, topMethod,animateTime} = this.state
-    if(isFetch) {
+    let { reLoad, topMethod } = this.state
+    if (reLoad) {
       this.setState({
         isPullDownStatus: LOADING,
         isPullUpStatus: null
-      },()=>{
+      }, () => {
         this.translate(this.pullDownBarHeight, true)
         topMethod && topMethod()
       })
@@ -222,7 +252,7 @@ class ScrollView extends Component {
   fill = once => {
     let { wrapHeight } = this.state
     let itemHeight = parseFloat(window.getComputedStyle(this.children).height)
-    this.wrap.style.height = `${wrapHeight}px`
+    wrapHeight && (this.wrap.style.height = `${wrapHeight}px`)
     this.setState({
       fillAttr: itemHeight < wrapHeight ? wrapHeight - itemHeight : false
     }, () => {
@@ -236,33 +266,36 @@ class ScrollView extends Component {
   // 设置初始目标位置
   setTarget = () => {
     let { itemIndex, itemKey, scrollX } = this.state
-    let children = this.children.children
-    let index
-    // 检测下标 || key 值
-    if (itemIndex) {
-      index = itemIndex
-    } else if (itemKey) {
-      for (let i = 0; i < this.children.length; i++) {
-        // console.log('key 值', this.children[i].key)
-        if (itemKey === this.children[i].key) {
-          index = i
-          break
+    if ((typeof itemIndex === 'number' && itemIndex >= 0) || itemKey) {
+      let children = this.children.children
+      let index
+      // 检测下标 || key 值
+
+      if (itemIndex >= 0) {
+        index = itemIndex
+      } else if (itemKey) {
+        for (let i = 0; i < this.props.children.length; i++) {
+          // console.log('key 值', this.props.children[i].key)
+          if (itemKey === this.props.children[i].key) {
+            index = i
+            break
+          }
         }
       }
-    }
-    let dom = scrollX ? this.children : this.wrap
-    if (index >= 0) {
-      if (scrollX) {
-        dom.scrollLeft = children[index].offsetLeft
-      } else {
-        console.log(children[index])
-        dom.scrollTop = children[index].offsetTop
+      let dom = scrollX ? this.children : this.wrap
+      if (index >= 0) {
+        if (scrollX) {
+          dom.scrollLeft = children[index].offsetLeft
+        } else {
+          dom.scrollTop = children[index].offsetTop
+        }
       }
+      // 等同步任务 完成后再添加 监听事件, 否则写成同步任务会触发 this.scroll
+      setTimeout(() => {
+        dom.addEventListener('scroll', this.scroll)
+      }, 0);
     }
-    // 等同步任务 完成后再添加 监听事件, 否则写成同步任务会触发 this.scroll
-    setTimeout(() => {
-      dom.addEventListener('scroll', this.scroll)
-    }, 0);
+
   }
 
   /**
@@ -287,7 +320,7 @@ class ScrollView extends Component {
    * @param {*} dom dom, 需要滚动的目标 
    * @param {*} direction  scrollTop || scrollLeft, 默认 scollTop
    */
-  // animate = (target, dom, direction = scrollTop) => {
+  // animate = (target, dom, direction = 'scrollTop') => {
   //   clearInterval(this.timer)
   //   console.log('执行 animate')
   //   this.timer = setInterval(() => {
@@ -311,8 +344,9 @@ class ScrollView extends Component {
   }
 
   render() {
-    let { isPullDownStatus, isPullUpStatus, fillAttr, scrollX, translate, isLoadOver } = this.state
+    let { isPullDownStatus, isPullUpStatus, fillAttr, scrollX, isLoadOver,loadOverText } = this.state
     let { style, children } = this.props
+    children = Array.isArray(children) ? children : [...children]
     const Spinner = () => {
       return <div className="spinner">
         <div className="bounce1"></div>
@@ -325,7 +359,7 @@ class ScrollView extends Component {
       <div className="load-more-content" ref={node => this.content = node}>
         {
           !scrollX && isPullDownStatus && !isPullUpStatus && <div className="pull-down-bar" ref={node => {
-            node && (this.pullDownBarHeight = parseFloat(window.getComputedStyle(node).height))
+            node && (this.pullDownBarHeight = Common.attr(node, 'height'))
           }}>
             {
               isPullDownStatus === LOADING ?
@@ -348,10 +382,11 @@ class ScrollView extends Component {
             >
               {item}
             </div>
-          })}
+          })
+          }
         </div>
         {
-          isLoadOver && (typeof isLoadOver === 'string' ? <p className='pull-up-tip'>{isLoadOver}</p> : <p className='pull-up-tip'>加载完毕</p>)
+          isLoadOver && loadOverText && (loadOverText ? <p className='pull-up-tip'>{loadOverText}</p> : <p className='pull-up-tip'>全部加载完毕~</p>)
         }
         {
           fillAttr && <div style={{ height: fillAttr + 'px' }}></div>

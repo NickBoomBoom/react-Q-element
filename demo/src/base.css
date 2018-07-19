@@ -1,4 +1,45 @@
-body,ul,p {
-  margin: 0 0 ;
+body, ul, p {
+  margin: 0 0;
   padding: 0 0;
+  list-style: none;
+}
+
+html {
+  font-size: 100px;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 479px) {
+  html {
+    font-size: 42.67px !important;
+  }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 639px) {
+  html {
+    font-size: 64px !important;
+  }
+}
+
+@media only screen and (min-width: 640px) and (max-width: 749px) {
+  html {
+    font-size: 85.34px !important;
+  }
+}
+
+@media only screen and (min-width: 750px) and (max-width: 959px) {
+  html {
+    font-size: 100px !important;
+  }
+}
+
+@media only screen and (min-width: 960px) and (max-width: 1241px) {
+  html {
+    font-size: 128px !important;
+  }
+}
+
+@media only screen and (min-width: 1242px) {
+  html {
+    font-size: 165.6px !important;
+  }
 }

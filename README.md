@@ -9,7 +9,7 @@
 ## 使用方法
 
 ```jsx
-npm i react-q-element    ||  yanr add react-q-element
+npm i react-q-element    ||  yarn add react-q-element
 
 // 本地安装依赖包后,就可直接在项目中引入
 // ex: 
@@ -57,6 +57,18 @@ import { NavBar, TabContainer, TabContainerItem, LazyLoad, ScrollView} from 'rea
 
 
 ## API 详解
+
+
+
+### -- AutoScrollTab
+
+点击后自动左 || 居中对齐
+
+点选元素后会给标签添加一个 'active' 类名, 方便样式更改, 也可以写在 onClick 事件中你来定义一些处理事件
+
+
+
+
 
 ### -- LazyLoad
 
@@ -139,11 +151,28 @@ const data = [{name: '标题1', type: 1}, {name:'标题2', type: 2}, {name:'标�
 | onLower        | Function         | 滚动到底部/右边, 会触发 onLower 事件                         |
 | onScroll       | Function         | 滚动实时触发,传递实时scroll 的值                             |
 | itemIndex      | Number           | 展示第几个内容, 默认第一个,传下标,从0开始                    |
-| itemKey        | String\|\|Number | 展示第几个内容,与 itemIndex 只能存在一个                     |
+| itemKey        | String\|\|Number | 展示第几个内容,与 itemIndex 只能存在一个, 需要使用时必须在传递过去的子元素中加入 key 值 |
 | animateTime    | Number           | 设置上拉下拉缓动动画完成时间                                 |
 | limit          | Number           | 下拉上拉移动速率调整, 公式: 拖动距离 / limit , 提升体验. 基础值为4 |
 
 ```jsx
+// itemKey 和 itemIndex  使用
+    <ScrollView
+        scrollX={true}
+        itemKey={'test2'}
+      >
+        <div style={{width: '375px', height: '100px', backgroundColor:'skyblue'}} key={'test1'}>
+          测试1
+        </div>
+        <div style={{width: '375px', height: '100px', backgroundColor:'green'}} key={'test2'}>
+          测试2
+        </div>
+        <div style={{width: '375px', height: '100px', backgroundColor:'yellow'}}>
+          测试3
+        </div>
+      </ScrollView>
+
+// 上拉加载  下拉刷新使用
 <ScrollView
             isFetch={true}
             scrollY={true}
