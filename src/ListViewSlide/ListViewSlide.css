@@ -1,0 +1,13 @@
+
+.list_view_slide_root {
+  overflow: hidden;
+
+}
+.list_view_slide_root .slide_content {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.list_view_slide_root .slide_content > .slide_item {
+  flex-shrink: 0
+}

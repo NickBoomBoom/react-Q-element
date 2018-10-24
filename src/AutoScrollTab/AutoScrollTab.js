@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Common from '../utils/Common'
+import { attr } from '../utils'
 import './AutoScrollTab.css'
 const LEFT = 'left'
 const CENTER = 'center'
@@ -9,13 +9,15 @@ class AutoScrollTab extends Component {
     let direction = props.left ? LEFT : CENTER
     this.interval = props.interval || 18
     this.state = {
+      index: props.index || 0,   // 默认开始的下标
       left: props.left,                       // 点击后默认跳向最左边
-      isScroll: true,                         // 是否开启滚动, 默认开始滚动
       fill: false,                            // 填充宽度
       child: null,                            // 子元素
       direction,                              // 点击后 item 是跳向中间 还是 最左边  默认中间
     }
   }
+
+
 
   componentDidMount() {
     let rootWidth = parseFloat(window.getComputedStyle(this.container, null).width)
@@ -33,27 +35,26 @@ class AutoScrollTab extends Component {
 
   // 是否具备滚动条件
   checkEl = () => {
-    let { rootWidth, child } = this.state
+    let { rootWidth, child, index } = this.state
     let itemsWidth = 0
     for (let i = 0, len = child.length; i < len; i++) {
-      itemsWidth += Common.attr(child[i], 'width')
+      itemsWidth += attr(child[i], 'width')
     }
     if (itemsWidth > rootWidth) {
-      return this.fill() 
+      this.fill()
+    } else {
+      this.sel(index)
     }
-    this.setState({
-      isScroll: false
-    })
   }
 
   // 填充
   fill = () => {
-    let { rootWidth, direction, centre, child } = this.state
-    let lastElWidth = Common.attr(child[child.length - 1], 'width')
+    let { rootWidth, direction, centre, child, index } = this.state
+    let lastElWidth = attr(child[child.length - 1], 'width')
     let fill = direction === CENTER ? centre - lastElWidth / 2 : rootWidth - lastElWidth
     this.setState({
       fill
-    })
+    }, () => this.sel(index))
   }
 
   //  目标
@@ -63,16 +64,16 @@ class AutoScrollTab extends Component {
     let left = item.offsetLeft
     let target
     if (direction === CENTER) {
-      target = left + Common.attr(item, 'width') / 2 > centre ? left + Common.attr(item, 'width') / 2 - centre : 0
+      target = left + attr(item, 'width') / 2 > centre ? left + attr(item, 'width') / 2 - centre : 0
     } else {
       target = left
     }
     return target
   }
 
-  sel = (item, index) => {
+  sel = (index, item) => {
     let target = this.target(index)
-    console.log('target==>', target)
+    console.log('target==>', target, index)
     target >= 0 && this.animate(target, this.container)
   }
 
@@ -90,10 +91,8 @@ class AutoScrollTab extends Component {
       let step = (target - dom[direction]) / 5
       step = step > 0 ? Math.ceil(step) : Math.floor(step)
       dom[direction] += step
-      console.log('进行中')
-      if (Math.abs(target - dom[direction]) <= Math.abs(step)) {
+      if (Math.abs(target - dom[direction]) <= Math.abs(step) || dom.scrollWidth - dom[direction] === dom.clientWidth) {
         clearInterval(this.timer)
-        console.log('清除中')
         dom[direction] = target
       }
     }, this.interval)
@@ -106,7 +105,7 @@ class AutoScrollTab extends Component {
     return <ul className="AutoScrollTab-root" ref={node => this.container = node}>
       {
         children.map((item, index) => {
-          return <li key={`children${index}`} className="item" onClick={() => this.sel(item, index)}>
+          return <li key={`children${index}`} className="item" onClick={() => this.sel(index, item)}>
             {item}
           </li>
         })

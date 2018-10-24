@@ -28,14 +28,15 @@ class LazyLoad extends Component {
   }
 
   lazyLoad(src) {
-    if (Screen.availHeight() + Screen.scrollTop() > this.img.offsetTop - 100) {
+    if (Screen.availHeight() + Screen.scrollTop() > this.img.getBoundingClientRect().top - 100) {
       !this.img.src && (this.img.src = src);
     }
   }
 
   render() {
     let { isAnimate } = this.state
-    let props = Object.assign({}, this.props);
+    let props = Object.assign({}, this.props)
+    props.src = null
     return (
       <div className={`${isAnimate ? 'LazyLoadImg' : ''}`} style={{ opacity: isAnimate ? 1 : 0 }} >
         <img

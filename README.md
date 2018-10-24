@@ -34,8 +34,10 @@ import { NavBar, TabContainer, TabContainerItem, LazyLoad, ScrollView} from 'rea
 │   └── src
 ├── nwb.config.js          // nwb 基础配置
 ├── package.json          
-├── src                   
+├── src              
+│   ├── AutoScrollTab      // 自动滚动居中 || 靠左
 │   ├── LazyLoad           // 懒加载
+│   ├── ListViewSlide      // 左滑删除收藏功能
 │   ├── NavBar             // 导航条
 │   ├── ScrollView         // 上拉加载,下拉属性, scrollview
 │   ├── TabContainer       // 左右拖拽,父级
@@ -79,6 +81,11 @@ import { NavBar, TabContainer, TabContainerItem, LazyLoad, ScrollView} from 'rea
 ```jsx
  <LazyLoad src={图片地址} />
 ```
+
+
+### -- ListViewSlide
+
+侧边按钮滑出
 
 
 

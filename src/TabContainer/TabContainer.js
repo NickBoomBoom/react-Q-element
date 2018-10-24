@@ -71,6 +71,7 @@ class TabContainer extends Component {
   }
   // 移动中
   slideMove = e => {
+    event.preventDefault();
     let moveEndX = e.changedTouches[0].pageX
     let moveEndY = e.changedTouches[0].pageY
     let X = moveEndX - this.startX
@@ -79,7 +80,7 @@ class TabContainer extends Component {
     if (!this.slideDirection || this.slideDirection === RIGHT || this.slideDirection === LEFT) {
       if (Math.abs(X) > Math.abs(Y) && X > 0) {
         // right
-        event.preventDefault();
+        
         // event.stopPropagation();
         // console.log('右移')
         if (this.index !== 0) {
@@ -89,7 +90,7 @@ class TabContainer extends Component {
       }
       else if (Math.abs(X) > Math.abs(Y) && X < 0) {
         // left
-        event.preventDefault();
+
         // event.stopPropagation();
         // console.log('左移')
         if (this.index !== this.props.children.length - 1) {

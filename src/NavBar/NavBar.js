@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import Common from '../utils/Common'
+import {attr} from '../utils'
 import './NavBar.css'
 
 
@@ -40,7 +40,7 @@ class NavBar extends Component {
   componentDidMount() {
     let { length } = this.state
     this.setState({
-      itemWidth: Common.attr(this.wrap, 'width') / length
+      itemWidth: attr(this.wrap, 'width') / length
     }, () => this.setBarWidth())
   }
 
