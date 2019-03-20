@@ -1,0 +1,38 @@
+#demo {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.component-list {
+  background: black;
+  color: gold;
+  height: 25%;
+  overflow: scroll;
+}
+
+.component-item {
+  margin: 1rem;
+}
+
+.sel {
+  color: red;
+}
+
+/* TabContainer */
+
+.tab-item {
+  height: 19rem;
+}
+.tab-item:nth-child(odd) {
+  background: red;
+}
+
+.tab-item:nth-child(even) {
+  background: gold;
+}

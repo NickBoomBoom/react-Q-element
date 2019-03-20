@@ -1,8 +1,0 @@
-.TabContainerItem {
-  overflow: auto;
-  font-size: 14px;
-  display: inline-block;
-  vertical-align: top;
-  width: 100%;
-  -webkit-overflow-scrolling: touch;
-}

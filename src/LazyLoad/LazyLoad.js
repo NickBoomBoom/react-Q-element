@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Screen from "../utils/Screen";
+// import Screen from "../utils/index";
 import './LazyLoad.css'
 
 class LazyLoad extends Component {
@@ -24,13 +24,13 @@ class LazyLoad extends Component {
 
   // 判断页面是否可滚动, 若不可滚动, 即刻显示图片
   isScroll() {
-    if (document.body.clientHeight <= Screen.clientHeight()) { this.lazyLoad() }
+    // if (document.body.clientHeight <= Screen.clientHeight()) { this.lazyLoad() }
   }
 
   lazyLoad(src) {
-    if (Screen.availHeight() + Screen.scrollTop() > this.img.getBoundingClientRect().top - 100) {
-      !this.img.src && (this.img.src = src);
-    }
+    // if (Screen.availHeight() + Screen.scrollTop() > this.img.getBoundingClientRect().top - 100) {
+    //   !this.img.src && (this.img.src = src);
+    // }
   }
 
   render() {

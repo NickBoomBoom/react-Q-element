@@ -1,122 +1,83 @@
-import React, { Component } from 'react'
-import './TabContainer.css'
-const LEFT = 'left'
-const RIGHT = 'right'
-const TOP = 'top'
-const DOWN = 'down'
+import React, { Component } from "react";
+import { getAttr, getTouchDirection } from "../utils/index";
+import "./TabContainer.css";
+import { TOUCH_RIGHT, TOUCH_LEFT } from "../const/index";
 
 /*  接受参数: 
-      interval : 触发滚动间距  Number 默认为屏幕的1/5
-      index : 默认0 展示第几页 Number
-      onSel: 回调函数  返回index  Function
+      interval : 触发切页动画 阀值 默认50
+      currentIndex : 默认0 展示第几页 Number
+      onSwitch: 页面切换回调函数  返回index  Function
       onTranslate: 回调函数 配合 Navbar 做 bar 联动, 返回一个对象 {
         distance:  Number // 移动距离
         transition: Boolean // 是否开启 transition 动画
       }
 */
-/* 
-  必须与 TabContainerItem 搭配使用
-    ex:   <TabContainer>
-            <TabContainerItem style={{ fontSize: '20px', backgroundColor: 'red' ,height: '500px'}}>
-            {arr.map(i => {
-                return <div key={i}>{i}</div>
-            })}
-            </TabContainerItem>
-            <TabContainerItem style={{ backgroundColor: 'yellow' }}>
-            {arr.map(i => {
-                return <div key={i}>{i}</div>
-            })}
-            </TabContainerItem>
-            <TabContainerItem style={{ backgroundColor: 'skyblue' }}>
-            {arr.map(i => {
-                return <div key={i}>{i}</div>
-            })}
-            </TabContainerItem>
-          </TabContainer>
-*/
 class TabContainer extends Component {
+  // this.container 根盒子
+  // this.wrapper 子盒子
   constructor(props) {
-    super(props)
-    this.itemWidth = window.screen.width
-    this.interval = props.interval || parseInt(this.itemWidth / 5)
-    this.index = props.index || 0
-    this.oldIndex = props.index || 0
+    super(props);
+    this.interval = props.interval || 50; // 触发阀值
+    this.currentIndex = props.currentIndex || 0; // 当前下标
+    this.animationTime = props.animationTime || 200; // 动画效果时间
   }
 
   componentWillReceiveProps(nextProps) {
-    // console.log('tabcontainer nextProps', nextProps)
-    let { index } = nextProps
-    let { onTranslate } = this.props
-    if (this.index !== index) {
-      this.index = index
-      onTranslate && onTranslate({ distance: -this.index * this.itemWidth })
-      this.container.style.transition = null
-      this.container.style.transform = `translateX(${-index * this.itemWidth}px)`
+    const { currentIndex } = nextProps;
+    const { onTranslate } = this.props;
+    if (this.currentIndex !== currentIndex) {
+      this.currentIndex = currentIndex;
+      const distance =-this.currentIndex * this.containerWidth
+      onTranslate &&
+        onTranslate({ distance  });
+      this.translate(distance);
     }
   }
+
   componentDidMount() {
-    this.translate(-this.index * this.itemWidth)
-    this.root.addEventListener('touchstart', this.slideStart)
-    this.root.addEventListener('touchmove', this.slideMove)
-    this.root.addEventListener('touchend', this.slideEnd)
+    this.translate(-this.currentIndex * this.containerWidth);
+    this.container.addEventListener("touchstart", this.slideStart);
+    this.container.addEventListener("touchmove", this.slideMove);
+    this.container.addEventListener("touchend", this.slideEnd);
   }
   componentWillUnmount() {
-    this.root.removeEventListener('touchstart', this.slideStart)
-    this.root.removeEventListener('touchmove', this.slideMove)
-    this.root.removeEventListener('touchend', this.slideEnd)
+    this.container.removeEventListener("touchstart", this.slideStart);
+    this.container.removeEventListener("touchmove", this.slideMove);
+    this.container.removeEventListener("touchend", this.slideEnd);
   }
+
   slideStart = e => {
-    this.startX = e.changedTouches[0].pageX
-    this.startY = e.changedTouches[0].pageY
-  }
+    this.startX = e.changedTouches[0].pageX;
+    this.startY = e.changedTouches[0].pageY;
+  };
   // 移动中
   slideMove = e => {
-    event.preventDefault();
-    let moveEndX = e.changedTouches[0].pageX
-    let moveEndY = e.changedTouches[0].pageY
-    let X = moveEndX - this.startX
-    let Y = moveEndY - this.startY
-    let distance = X - this.itemWidth * this.index
-    if (!this.slideDirection || this.slideDirection === RIGHT || this.slideDirection === LEFT) {
-      if (Math.abs(X) > Math.abs(Y) && X > 0) {
-        // right
-        
-        // event.stopPropagation();
-        // console.log('右移')
-        if (this.index !== 0) {
-          this.translate(distance)
-        }
-        this.slideDirection = RIGHT
-      }
-      else if (Math.abs(X) > Math.abs(Y) && X < 0) {
-        // left
+    e.preventDefault();
+    const moveEndX = e.changedTouches[0].pageX;
+    const moveEndY = e.changedTouches[0].pageY;
+    const X = moveEndX - this.startX;
+    const Y = moveEndY - this.startY;
+    const distance = X - this.containerWidth * this.currentIndex;
 
-        // event.stopPropagation();
-        // console.log('左移')
-        if (this.index !== this.props.children.length - 1) {
-          this.translate(distance)
-        }
-        this.slideDirection = LEFT
-      }
-      else if (Math.abs(Y) > Math.abs(X) && Y > 0) {
-        // down
-        if (this.slideDirection) return
-        this.slideDirection = DOWN
-        // console.log('向下')
-      }
-      else if (Math.abs(Y) > Math.abs(X) && Y < 0) {
-        // up 
-        if (this.slideDirection) return
-        this.slideDirection = TOP
-        // console.log('向上')
-      }
+    // 判断方向
+    this.slideDirection = getTouchDirection(X, Y);
+
+    // 右滑
+    if (this.slideDirection === TOUCH_RIGHT) {
+      this.currentIndex !== 0 && this.translate(distance);
     }
-  }
+
+    // 左滑
+    if (this.slideDirection === TOUCH_LEFT) {
+      const { children } = this.props;
+      this.currentIndex !== children.length - 1 && this.translate(distance);
+    }
+  };
   // 触摸结束
   slideEnd = e => {
-    this.endX = e.changedTouches[0].pageX
-    this.isTranslate()
-  }
+    this.endX = e.changedTouches[0].pageX;
+    this.isTranslate();
+  };
 
   /**
    * 实时移动
@@ -125,57 +86,59 @@ class TabContainer extends Component {
    * @param {*} transition 是否开启动画
    */
   translate = (distance, transition) => {
-    let cssText = `
-    ${transition ?'transition: all 200ms;':''}
+    const { onTranslate } = this.props;
+    const cssText = `
+    ${transition ? `transition: all ${this.animationTime}ms;` : ""}
     transform:translateX(${distance}px)
-    `
-    this.container.style = cssText
-    let { onTranslate } = this.props
-    onTranslate && onTranslate({ distance, transition })
-  }
+    `;
+    this.wrapper.style = cssText;
+    onTranslate && onTranslate({ distance, transition });
+  };
+
   // 判断用户是查看上一页还是下一页, 并设置回弹效果
   isTranslate = () => {
-
-    if (this.slideDirection === RIGHT || this.slideDirection === LEFT) {
-      let { onSel } = this.props
-      let distance = this.endX - this.startX
-      let obj = {
-        // 上一页
-        'right':
-          () => {
-            if (this.index !== 0) {
-              this.index--
-            }
-          },
-        // 下一页
-        'left': () => {
-          if (this.index !== this.props.children.length - 1) {
-            this.index++
-          }
+    if (
+      this.slideDirection === TOUCH_RIGHT ||
+      this.slideDirection === TOUCH_LEFT
+    ) {
+      const { onSwitch, children } = this.props;
+      const distance = this.endX - this.startX;
+      const OO = {
+        TOUCH_RIGHT: () => {
+          this.currentIndex !== 0 && this.currentIndex--;
+        },
+        TOUCH_LEFT: () => {
+          this.currentIndex !== children.length - 1 && this.currentIndex++;
         }
-      }
+      };
       // 滑动距离大于阀值  判断左右,跳转下一页 or 上一页
       if (Math.abs(distance) >= this.interval) {
         // 判断左右 跳转下一页
-        obj[this.slideDirection]()
-        console.log('上下页切换', this.index)
-        onSel && onSel(this.index)
+        OO[this.slideDirection]();
+        onSwitch && onSwitch(this.currentIndex);
       }
-      this.translate(-this.index * this.itemWidth, true)
+      this.translate(-this.currentIndex * this.containerWidth, true);
     }
-    this.slideDirection = null
-  }
+  };
+
+  getNode = e => {
+    if (!e) return;
+    this.container = e;
+    this.containerWidth = parseInt(getAttr(e).width);
+  };
 
   render() {
-    return <div className="tab-container-root" ref={node => {
-      this.root = node
-    }}>
-      <ul className="tab-container" ref={node => {
-        this.container = node
-      }}>
-        {this.props.children}
-      </ul>
-    </div>
+    const { children } = this.props;
+    return (
+      <div className="tab-container-root" ref={this.getNode}>
+        <ul
+          ref={node => node && (this.wrapper = node)}
+          className="tab-container-ul"
+        >
+          {children}
+        </ul>
+      </div>
+    );
   }
 }
-export default TabContainer
+export default TabContainer;

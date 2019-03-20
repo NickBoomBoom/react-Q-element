@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react'
-import { attr } from '../utils'
+import { getAttr } from '../utils/index'
 import './ListViewSlide.css'
 
 const TOUCH_TOP = 'up'
@@ -31,9 +31,9 @@ class ListViewSlide extends Component {
     let els = this.content.children
     let canMoveX = 0
     for (let i = 0, len = els.length; i < len; i++) {
-      canMoveX += attr(els[i], 'width')
+      canMoveX += getAttr(els[i], 'width')
     }
-    let mainWidth = attr(els[0], 'width')
+    let mainWidth = getAttr(els[0], 'width')
     canMoveX = canMoveX - mainWidth
     this.container.style.width = mainWidth + 'px'
     this.canMoveX = canMoveX

@@ -1,10 +1,14 @@
-
 .tab-container-root {
-  -webkit-overflow-scrolling:touch;
-  overflow: hidden;
   width: 100%;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
-.tab-container-root .tab-container {
-  font-size: 0;
-  white-space: nowrap;
+
+.tab-container-root .tab-container-ul {
+  display: flex;
+}
+
+.tab-container-root .tab-container-ul>li {
+  width: 100%;
+  flex-shrink: 0
 }

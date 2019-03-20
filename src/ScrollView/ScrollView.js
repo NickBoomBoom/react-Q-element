@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {attr} from '../utils'
+import {getAttr} from '../utils/index'
 import './ScrollView.css'
 const TOP = 'top'
 const BOTTOM = 'bottom'
@@ -364,7 +364,7 @@ class ScrollView extends Component {
       <div className="load-more-content" ref={node => this.content = node}>
         {
           !scrollX && isPullDownStatus && !isPullUpStatus && <div className="pull-down-bar" ref={node => {
-            node && (this.pullDownBarHeight = attr(node, 'height'))
+            node && (this.pullDownBarHeight = getAttr(node, 'height'))
           }}>
             {
               isPullDownStatus === LOADING ?
