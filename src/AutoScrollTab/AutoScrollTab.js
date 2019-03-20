@@ -17,8 +17,6 @@ class AutoScrollTab extends Component {
     }
   }
 
-
-
   componentDidMount() {
     let rootWidth = parseFloat(window.getComputedStyle(this.container, null).width)
     let centre = rootWidth / 2

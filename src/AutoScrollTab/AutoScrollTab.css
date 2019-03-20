@@ -8,6 +8,11 @@
 .AutoScrollTab-root>.item {
   display: inline-block;
   vertical-align: top;
+  text-align: center;
+  min-width: 20%;
+  height: 30px;
+  color: #333333;
+  font-size: 16px;
 }
 
 .AutoScrollTab-root::-webkit-scrollbar {

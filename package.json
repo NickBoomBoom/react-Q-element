@@ -20,12 +20,12 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "react": "16.x"
+    "react": "16.6.3"
   },
   "devDependencies": {
-    "nwb": "0.21.x",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "nwb": "0.23.0",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
   },
   "author": "",
   "homepage": "",
